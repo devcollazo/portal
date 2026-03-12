@@ -17,14 +17,22 @@
       role="group"
       [attr.aria-label]="item.title"
     >
-      <figure class="card-header">
-        <img [src]="item.image" [alt]="item.title" />
-      </figure>
-      <div class="card-body">
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
-        <div class="card-actions">
-          <a [href]="item.link" target="_blank" rel="noreferrer" class="btn-green">Ir</a>
+      <div class="card-main">
+        <figure class="card-thumb">
+          <img [src]="item.image" [alt]="item.title" />
+        </figure>
+        <div class="card-body">
+          <div class="card-headline">
+            <h3>{{ item.title }}</h3>
+            <span class="card-date">{{ item.createdAt | date: 'mediumDate' }}</span>
+          </div>
+          <p>{{ item.description }}</p>
+          <div class="card-actions">
+            <div class="card-link-chip">
+              <span>{{ item.link }}</span>
+            </div>
+            <a [href]="item.link" target="_blank" rel="noreferrer" class="btn-green">Ir</a>
+          </div>
         </div>
       </div>
     </article>

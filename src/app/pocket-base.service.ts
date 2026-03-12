@@ -6,8 +6,8 @@ export interface PocketEntryRecord {
   id: string;
   title: string;
   description: string;
-  image: string;
-  link: string;
+  image_url: string;
+  entry_url: string;
   created: string;
 }
 
@@ -18,6 +18,12 @@ export type NewPocketEntryPayload = {
   link: string;
 };
 
+interface FileUploadRecord {
+  id: string;
+  title?: string;
+  type?: string;
+  file: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -50,16 +56,42 @@ export class PocketBaseService {
   }
 
   fetchEntries() {
-    return this.pb.collection('entries').getFullList<PocketEntryRecord>(200, {
+    return this.pb.collection('portal_entries').getFullList<PocketEntryRecord>(200, {
       sort: '-created'
     });
   }
 
   createEntry(payload: NewPocketEntryPayload) {
-    return this.pb.collection('entries').create(payload);
+    return this.pb.collection('portal_entries').create({
+      title: payload.title,
+      description: payload.description,
+      image_url: payload.image,
+      entry_url: payload.link
+    });
   }
 
   deleteEntry(id: string) {
-    return this.pb.collection('entries').delete(id);
+    return this.pb.collection('portal_entries').delete(id);
+  }
+
+  updateEntry(id: string, payload: NewPocketEntryPayload) {
+    return this.pb.collection('portal_entries').update(id, {
+      title: payload.title,
+      description: payload.description,
+      image_url: payload.image,
+      entry_url: payload.link
+    });
+  }
+
+  async uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const record = (await this.pb.collection('files').create(formData)) as FileUploadRecord;
+    if (!record?.file) {
+      throw new Error('La carga no devolvió una URL válida.');
+    }
+
+    return this.pb.getFileUrl(record, record.file);
   }
 }

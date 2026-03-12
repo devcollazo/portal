@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -31,6 +31,10 @@ export class AdminComponent {
 
   loginLoading = false;
   loginError = '';
+  imageUploading = false;
+  imageUploadError = '';
+  editingEntryId?: string;
+  @ViewChild('fileInput', { static: false }) fileInput?: ElementRef<HTMLInputElement>;
 
   get isAuthenticated() {
     return this.pocketBase.isAuthenticated;
@@ -47,7 +51,11 @@ export class AdminComponent {
       return;
     }
 
-    await this.contentService.add(this.formModel);
+    if (this.editingEntryId) {
+      await this.contentService.update(this.editingEntryId, this.formModel);
+    } else {
+      await this.contentService.add(this.formModel);
+    }
     this.resetForm(form);
   }
 
@@ -98,6 +106,46 @@ export class AdminComponent {
       image: '',
       link: ''
     };
+    this.editingEntryId = undefined;
+  }
+
+  startEditing(entry: PortalContent) {
+    this.editingEntryId = entry.id;
+    this.formModel = {
+      title: entry.title,
+      description: entry.description,
+      image: entry.image,
+      link: entry.link
+    };
+  }
+
+  cancelEdit(form: NgForm) {
+    this.resetForm(form);
+  }
+
+  triggerFileInput() {
+    this.fileInput?.nativeElement.click();
+  }
+
+  async handleFile(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    this.imageUploadError = '';
+    this.imageUploading = true;
+
+    try {
+      const url = await this.pocketBase.uploadImage(file);
+      this.formModel.image = url;
+    } catch (error: unknown) {
+      this.imageUploadError = error instanceof Error ? error.message : 'No se pudo subir el archivo.';
+    } finally {
+      this.imageUploading = false;
+      target.value = '';
+    }
   }
 
   private formatAuthError(error: unknown) {

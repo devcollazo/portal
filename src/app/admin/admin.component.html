@@ -37,15 +37,11 @@
   </section>
 
   <section *ngIf="isAuthenticated" class="admin-form-section">
-    <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)" novalidate>
       <div class="form-grid">
         <label>
           Título
           <input name="title" [(ngModel)]="formModel.title" required maxlength="80" placeholder="Matriz de inspiración" />
-        </label>
-        <label>
-          Imagen (URL)
-          <input name="image" [(ngModel)]="formModel.image" required placeholder="https://..." />
         </label>
         <label class="full-span">
           Descripción
@@ -63,7 +59,35 @@
           <input name="link" [(ngModel)]="formModel.link" required placeholder="https://" />
         </label>
       </div>
-      <button type="submit" [disabled]="form.invalid">Guardar contenido</button>
+
+      <div class="upload-row">
+        <button
+          type="button"
+          class="ghost-link upload-btn"
+          (click)="triggerFileInput()"
+          [disabled]="imageUploading"
+        >
+          {{ imageUploading ? 'Subiendo…' : formModel.image ? 'Reemplazar imagen' : 'Subir imagen' }}
+        </button>
+        <span *ngIf="formModel.image" class="upload-hint">Imagen cargada</span>
+        <input
+          #fileInput
+          type="file"
+          hidden
+          accept="image/*"
+          (change)="handleFile($event)"
+        />
+      </div>
+      <p *ngIf="imageUploadError" class="upload-error">{{ imageUploadError }}</p>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="form.invalid || !formModel.image">
+          {{ editingEntryId ? 'Actualizar contenido' : 'Guardar contenido' }}
+        </button>
+        <button *ngIf="editingEntryId" type="button" class="ghost-link" (click)="cancelEdit(form)">
+          Cancelar edición
+        </button>
+      </div>
     </form>
   </section>
 
@@ -80,7 +104,10 @@
         </div>
         <div class="entry-meta">
           <span>{{ item.createdAt | date: 'mediumDate' }}</span>
-          <button type="button" (click)="removeEntry(item)">Eliminar</button>
+          <div class="entry-meta-actions">
+            <button type="button" class="ghost-link edit-btn" (click)="startEditing(item)">Editar</button>
+            <button type="button" (click)="removeEntry(item)">Eliminar</button>
+          </div>
         </div>
       </div>
     </div>

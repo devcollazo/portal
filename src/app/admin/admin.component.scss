@@ -3,7 +3,6 @@
   min-height: 100vh;
   background: #070b16;
   color: #f4f6fc;
-  padding: 2rem clamp(1.5rem, 2vw, 2.75rem) 3rem;
 }
 
 .admin-shell {
@@ -72,11 +71,19 @@ header p {
 
 .ghost-link {
   display: inline-block;
-  border: 1px solid rgba(118, 242, 198, 0.7);
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 0.5rem 1rem;
   color: #76f2c6;
   text-decoration: none;
+  background: rgba(76, 197, 255, 0.12);
+  transition: background 0.25s ease, color 0.25s ease, outline 0.25s ease;
+}
+
+.ghost-link:hover,
+.ghost-link:focus-visible {
+  background: rgba(76, 197, 255, 0.35);
+  color: #f4f6fc;
 }
 
 .admin-form-section {
@@ -87,27 +94,58 @@ header p {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-.form-grid {
+  .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
 }
 
-label {
-  display: flex;
+  label {
+    display: flex;
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.95rem;
-}
+  }
 
-input,
-textarea {
+
+  .upload-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .upload-btn {
+    border-radius: 0.9rem;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+  }
+
+  .upload-hint {
+    font-size: 0.9rem;
+    color: rgba(118, 242, 198, 0.9);
+  }
+
+  .upload-error {
+    margin: 0;
+    color: #ff7b72;
+    font-size: 0.85rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  input,
+  textarea {
   border-radius: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(8, 12, 23, 0.9);
@@ -116,7 +154,7 @@ textarea {
   font-family: inherit;
 }
 
-button[type='submit'] {
+  button[type='submit'] {
   align-self: flex-start;
   background: #1ed760;
   color: #041115;
@@ -126,12 +164,12 @@ button[type='submit'] {
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease;
-}
+  }
 
-button[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
 button[type='submit']:hover:not([disabled]) {
   transform: translateY(-1px);
@@ -180,12 +218,23 @@ button[type='submit']:hover:not([disabled]) {
   color: rgba(244, 246, 252, 0.7);
 }
 
-.entry-meta {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+  .entry-meta {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .entry-meta-actions {
+    display: flex;
+    gap: 0.35rem;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .entry-meta-actions button {
+    padding-inline: 0.6rem;
+  }
 
 .entry-meta span {
   font-size: 0.85rem;

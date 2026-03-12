@@ -30,8 +30,8 @@ export class ContentService {
   refresh(): Promise<void> {
     return this.pocketBase
       .fetchEntries()
-      .then((records) => this.state$.next(records.map((record) => this.toPortalContent(record))))
-      .catch((error) => {
+      .then((records: PocketEntryRecord[]) => this.state$.next(records.map((record) => this.toPortalContent(record))))
+      .catch((error: unknown) => {
         console.error('Error cargando contenido del portal', error);
         this.state$.next([]);
       });
@@ -45,13 +45,17 @@ export class ContentService {
     return this.pocketBase.deleteEntry(id).then(() => this.refresh());
   }
 
+  update(id: string, entry: NewPocketEntryPayload): Promise<void> {
+    return this.pocketBase.updateEntry(id, entry).then(() => this.refresh());
+  }
+
   private toPortalContent(record: PocketEntryRecord): PortalContent {
     return {
       id: record.id,
       title: record.title,
       description: record.description,
-      image: record.image,
-      link: record.link,
+      image: record.image_url,
+      link: record.entry_url,
       createdAt: record.created
     };
   }
