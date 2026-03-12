@@ -1,0 +1,36 @@
+name: angular_deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout_code
+        uses: actions/checkout@v4
+
+      - name: setup_node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: install_dependencies
+        run: npm ci
+
+      - name: build_project
+        run: npm run build -- --configuration production
+
+      - name: deploy_to_server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "dist/portal/browser/*"
+          target: "/var/www/html"
+          strip_components: 3
