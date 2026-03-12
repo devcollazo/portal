@@ -1,0 +1,32 @@
+<div class="home-shell">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Portal en construcción</p>
+      <h1>Portal de desarrollador y contenido.</h1>
+      <p class="subtitle">Todo lo que necesito consultar o compartir desde un espacio personal ligero.</p>
+    </div>
+    <div class="hero-actions">
+      <a routerLink="/admin" class="ghost-link">Ir al panel administrador</a>
+    </div>
+  </header>
+
+  <section class="content-list">
+    <article
+      class="content-card"
+      *ngFor="let item of contents | async; trackBy: trackById"
+      role="group"
+      [attr.aria-label]="item.title"
+    >
+      <figure class="card-header">
+        <img [src]="item.image" [alt]="item.title" />
+      </figure>
+      <div class="card-body">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+        <div class="card-actions">
+          <a [href]="item.link" target="_blank" rel="noreferrer" class="btn-green">Ir</a>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>
